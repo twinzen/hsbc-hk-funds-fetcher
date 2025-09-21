@@ -1,0 +1,23 @@
+CREATE VIEW fund_master_view AS
+SELECT 
+    fp.product_code AS fund_code,
+    fp.response_data->'payload'->0->>'productAlternativeNumber' AS fund_code,
+    fp.response_data->'payload'->0->'attributeMap'->>'prodName' AS fund_name,
+    (fq.response_data->'priceQuote'->>'priceQuote')::decimal AS fund_price,
+    (
+        SELECT (cr->>'dailyPerformanceNAV')::decimal
+        FROM jsonb_array_elements(fq.response_data->'priceQuote'->'cumulativeReturns'->'items') AS cr
+        WHERE cr->>'period' = 'YTD'
+    ) AS performance_1_month,
+    (
+        SELECT (ba->>'weighting')::decimal
+        FROM jsonb_array_elements(fha.response_data->'holdingAllocation') AS ha
+        CROSS JOIN jsonb_array_elements(ha->'breakdowns') AS ba
+        WHERE ha->>'methods' = 'assetAllocations' AND ba->>'name' = 'Bond'
+    ) AS asset_allocation_bond
+FROM 
+    fund_product fp
+JOIN 
+    fund_quote_detail fq ON fp.product_code = fq.product_code
+JOIN 
+    fund_holding_allocation fha ON fp.product_code = fha.product_code;

@@ -198,8 +198,6 @@ tramp
 # Project specific files to ignore
 CheckDatabase.class
 CheckDatabase.java
-*.sql
-*.txt
 logs/
 
 # Keep important documentation but ignore temporary files

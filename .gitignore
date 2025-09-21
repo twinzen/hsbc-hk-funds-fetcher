@@ -211,12 +211,3 @@ logs/
 !create_tables_simple.sql
 !sample_queries.sql
 
-# Ignore temporary SQL files
-analyze_data.sql
-check_database.sql
-corrected_query.sql
-fixed_query.sql
-simple_corrected_query.sql
-simple_query.sql
-create_fund_class_view.txt
-create_fund_master_view.txt
